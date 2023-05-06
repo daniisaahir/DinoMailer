@@ -1,6 +1,7 @@
 <?php
 $statusMessage = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
     // Get the form inputs
     $to = $_POST["to"];
     $subject = $_POST["subject"];
@@ -8,14 +9,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $from = $_POST["from"];
 
     // Set the email headers
+    $boundary = md5(uniqid());
     $headers = "From: $from\r\n";
     $headers .= "Reply-To: $from\r\n";
-    $headers .= "Content-type: text/html\r\n";
+    $headers .= "Content-type: multipart/mixed; boundary=\"$boundary\"\r\n";
+
+    // Create the message body
+    $body = "--$boundary\r\n";
+    $body .= "Content-type: text/html; charset=iso-8859-1\r\n";
+    $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+    $body .= $message . "\r\n";
+
+    // Attach the files
+    if (isset($_FILES['attachment']))
+    {
+        $count = count($_FILES['attachment']['name']);
+        for ($i = 0;$i < $count;$i++)
+        {
+            if ($_FILES['attachment']['error'][$i] == UPLOAD_ERR_OK)
+            {
+                $attachment = chunk_split(base64_encode(file_get_contents($_FILES['attachment']['tmp_name'][$i])));
+                $body .= "--$boundary\r\n";
+                $body .= "Content-Type: {$_FILES['attachment']['type'][$i]}; name=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
+                $body .= "Content-Disposition: attachment; filename=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
+                $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+                $body .= $attachment . "\r\n";
+            }
+        }
+    }
 
     // Send the email
-    if (mail($to, $subject, $message, $headers)) {
+    if (mail($to, $subject, $body, $headers))
+    {
         $statusMessage = "Email sent successfully.";
-    } else {
+    }
+    else
+    {
         $statusMessage = "Email sending failed.";
     }
 }
@@ -71,53 +100,104 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #222;
             border-radius: 10px;
             padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
+            box-shadow: 0 20px 40px rgba(0, 0, 0.1);
+}
+    label {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #fff;
+    }
 
-        label {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            color: #fff;
-        }
+    input[type="email"],
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: 400;
+        color: #fff;
+        background-color: #333;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
 
-        input[type="email"],
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            font-weight: 400;
-            color: #fff;
-            background-color: #333;
-            border: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
+    input[type="email"]:focus,
+    input[type="text"]:focus,
+    textarea:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
 
-        input[type="email"]:focus,
-        input[type="text"]:focus,
-        textarea:focus {
-            outline: none;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+    textarea {
+        height: 150px;
+        resize: none;
+    }
 
-        textarea {
-            height: 150px;
-            resize: none;
-        }
+    .file-input {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
 
-        input[type="submit"] {
-            background-color: #ff4444;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 500;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-           input[type="submit"]:hover {
+    .file-input input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-input label {
+        background-color: #ff4444;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+        display: inline-block;
+    }
+
+    .file-input label:hover {
+        background-color: #ff3333;
+    }
+
+    .file-input-file-names {
+        font-size: 16px;
+        font-weight: 400;
+        color: #fff;
+        background-color: #333;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-style: italic;
+    }
+
+    input[type="submit"] {
+        background-color: #ff4444;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+        margin-bottom: 20px;
+        margin-top: 30px;
+    }
+
+    input[type="submit"]:hover {
         background-color: #ff3333;
     }
 
@@ -145,7 +225,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h1>FastMailerPHP</h1>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <label for="from">From</label>
             <input type="email" id="from" name="from" required>
             <label for="to">To</label>
@@ -154,9 +234,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="text" id="subject" name="subject" required>
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="10" required></textarea>
+            <div class="file-input">
+                <input type="file" id="attachment" name="attachment[]" multiple onchange="updateFileNames()">
+                <label for="attachment">Choose Files</label>
+            </div>
+            <div id="file-names"></div>
             <input type="submit" value="Send">
             <p style="color: #fff;"><?php echo $statusMessage; ?></p>
         </form>
     </div>
+    <script>
+    function updateFileNames() {
+        const files = document.getElementById("attachment").files;
+        let fileNames = "";
+        for (let i = 0; i < files.length; i++) {
+            fileNames += '<span class="file-input-file-names">' + files[i].name + "</span>";
+        }
+        document.getElementById("file-names").innerHTML = fileNames;
+    }
+</script>
 </body>
 </html>
