@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>FastMailerPHP</title>
+    <title>DinoMailer</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600">
     <style>
         * {
@@ -224,7 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 </head>
 <body>
     <div class="container">
-        <h1>FastMailerPHP</h1>
+        <h1>DinoMailer</h1>
         <form method="post" enctype="multipart/form-data">
             <label for="from">From</label>
             <input type="email" id="from" name="from" required>
