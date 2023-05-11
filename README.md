@@ -1,4 +1,4 @@
-# FastMailerPHP
+# DinoMailer
 Uses PHP mail() function, it works really fast and beautifully in both desktop and mobile.
 
 # Feature
