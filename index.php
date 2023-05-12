@@ -1,12 +1,13 @@
 <?php
 $statusMessage = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form inputs
     $to = $_POST["to"];
     $subject = $_POST["subject"];
     $message = $_POST["message"];
     $from = $_POST["from"];
+    $sendCount = isset($_POST["send_count"]) ? intval($_POST["send_count"]) : 1; // Get the number of times to send the message (default is 1)
 
     // Set the email headers
     $boundary = md5(uniqid());
@@ -14,38 +15,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     $headers .= "Reply-To: $from\r\n";
     $headers .= "Content-type: multipart/mixed; boundary=\"$boundary\"\r\n";
 
-    // Create the message body
-    $body = "--$boundary\r\n";
-    $body .= "Content-type: text/html; charset=iso-8859-1\r\n";
-    $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-    $body .= $message . "\r\n";
+    for ($count = 0; $count < $sendCount; $count++) {
+        // Create the message body
+        $body = "--$boundary\r\n";
+        $body .= "Content-type: text/html; charset=iso-8859-1\r\n";
+        $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+        $body .= $message . "\r\n";
 
-    // Attach the files
-    if (isset($_FILES['attachment']))
-    {
-        $count = count($_FILES['attachment']['name']);
-        for ($i = 0;$i < $count;$i++)
-        {
-            if ($_FILES['attachment']['error'][$i] == UPLOAD_ERR_OK)
-            {
-                $attachment = chunk_split(base64_encode(file_get_contents($_FILES['attachment']['tmp_name'][$i])));
-                $body .= "--$boundary\r\n";
-                $body .= "Content-Type: {$_FILES['attachment']['type'][$i]}; name=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
-                $body .= "Content-Disposition: attachment; filename=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
-                $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
-                $body .= $attachment . "\r\n";
+        // Attach the files
+        if (isset($_FILES['attachment'])) {
+            $fileCount = count($_FILES['attachment']['name']);
+            for ($i = 0; $i < $fileCount; $i++) {
+                if ($_FILES['attachment']['error'][$i] == UPLOAD_ERR_OK) {
+                    $attachment = chunk_split(base64_encode(file_get_contents($_FILES['attachment']['tmp_name'][$i])));
+                    $body .= "--$boundary\r\n";
+                    $body .= "Content-Type: {$_FILES['attachment']['type'][$i]}; name=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
+                    $body .= "Content-Disposition: attachment; filename=\"{$_FILES['attachment']['name'][$i]}\"\r\n";
+                    $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+                    $body .= $attachment . "\r\n";
+                }
             }
         }
-    }
 
-    // Send the email
-    if (mail($to, $subject, $body, $headers))
-    {
-        $statusMessage = "Email sent successfully.";
-    }
-    else
-    {
-        $statusMessage = "Email sending failed.";
+        // Send the email
+        if (mail($to, $subject, $body, $headers)) {
+            $statusMessage = "Email sent successfully.";
+        } else {
+            $statusMessage = "Email sending failed.";
+            break; // Stop sending emails if an error occurs
+        }
     }
 }
 ?>
@@ -87,21 +85,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             font-weight: 600;
             margin-bottom: 20px;
             text-align: center;
-            color: #fff;
-        }
-
-        form {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #222;
-            border-radius: 10px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0.1);
+color: #fff;
 }
+    form {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #222;
+        border-radius: 10px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0.1);
+    }
+
     label {
         font-size: 18px;
         font-weight: 500;
@@ -111,7 +109,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     input[type="email"],
     input[type="text"],
-    textarea {
+    textarea,
+    input[type="number"] {
         width: 100%;
         padding: 10px;
         font-size: 16px;
@@ -121,12 +120,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         border: none;
         border-radius: 5px;
         margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        outline: none;
     }
 
     input[type="email"]:focus,
     input[type="text"]:focus,
-    textarea:focus {
-        outline: none;
+    textarea:focus,
+    input[type="number"]:focus {
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
 
@@ -212,10 +213,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             font-size: 28px;
         }
 
-        form {
-            max-width: 350px;
-        }
-
+        form
+{
+max-width: 350px;
+}
         input[type="submit"] {
             font-size: 16px;
         }
@@ -234,9 +235,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             <input type="text" id="subject" name="subject" required>
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="10" required></textarea>
+            <label for="send_count">Send Count</label>
+            <input type="number" id="send_count" name="send_count" value="1" min="1" class="form-input">
             <div class="file-input">
                 <input type="file" id="attachment" name="attachment[]" multiple onchange="updateFileNames()">
-                <label for="attachment">Choose Files</label>
+<label for="attachment">Choose Files</label>
             </div>
             <div id="file-names"></div>
             <input type="submit" value="Send">
@@ -244,14 +247,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         </form>
     </div>
     <script>
-    function updateFileNames() {
-        const files = document.getElementById("attachment").files;
-        let fileNames = "";
-        for (let i = 0; i < files.length; i++) {
-            fileNames += '<span class="file-input-file-names">' + files[i].name + "</span>";
+        function updateFileNames() {
+            const files = document.getElementById("attachment").files;
+            let fileNames = "";
+            for (let i = 0; i < files.length; i++) {
+                fileNames += '<span class="file-input-file-names">' + files[i].name + "</span>";
+            }
+            document.getElementById("file-names").innerHTML = fileNames;
         }
-        document.getElementById("file-names").innerHTML = fileNames;
-    }
-</script>
+    </script>
 </body>
 </html>
