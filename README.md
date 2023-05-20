@@ -25,7 +25,7 @@ If you are looking for a way to send bulk emails, DinoMailer is a great option.
 DinoMailer is a great way to stay in touch with your customers, send out marketing messages, or notify people about important events. It is a powerful tool that can be used for a variety of purposes.
 
 
-Don't use it for illegal purposes, I will not be responsible to any damage on any person or entities.
+Don't use it for illegal activities, I will not be responsible to any damage on any person or entities. The receiver could trace your web server's IP.
 
 
 
