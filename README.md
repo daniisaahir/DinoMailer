@@ -8,7 +8,7 @@ DinoMailer is a PHP project that allows users to send bulk emails without the ne
 # Features
 
 * No SMTP or login needed, it uses PHP `mail()`
-* Send as many emails as you want
+* Send bulk emaila
 * Send multiple attachments
 
 
