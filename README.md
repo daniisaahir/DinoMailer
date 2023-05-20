@@ -3,11 +3,11 @@
 
 
 
-DinoMailer is a PHP project that allows users to send bulk emails without the need to sign up. It is a powerful tool that can be used for a variety of purposes, such as marketing, customer communication, and notifications. It uses PHP `mail()` function, no SMTP needed.
+DinoMailer is a PHP project that allows users to send bulk emails without the need to sign up. It is a powerful tool that can be used for a variety of purposes, such as marketing, customer communication, and notifications.
 
 # Features
 
-* Send bulk emails without the need to sign up
+* No SMTP or login needed, it uses PHP `mail()`
 * Send as many emails as you want
 * Send multiple attachments
 
