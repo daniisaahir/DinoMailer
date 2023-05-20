@@ -13,7 +13,7 @@ DinoMailer is a PHP project that allows users to send bulk emails without the ne
 * Free and open source
 
 
-If you are looking for a way to send bulk emails, DinoMailer is a great option.
+
 
 
 
