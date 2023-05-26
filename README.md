@@ -1,48 +1,24 @@
 # DinoMailer
 
+DinoMailer is a PHP project designed to facilitate the sending of bulk emails without requiring users to sign up. This powerful tool can be utilized for various purposes, including marketing campaigns, customer communication, and important notifications.
 
+## Features
 
+* Seamless integration with PHP's `mail()` function, eliminating the need for SMTP or login credentials.
+* Effortlessly send bulk emails to a large number of recipients.
+* Attach multiple files to your emails.
+* DinoMailer is free and open source, providing flexibility and customization options.
 
-DinoMailer is a PHP project that allows users to send bulk emails without the need to sign up. It is a powerful tool that can be used for a variety of purposes, such as marketing, customer communication, and notifications.
+## Disclaimer
 
-# Features
+DinoMailer serves as an excellent solution for maintaining contact with your customers, delivering marketing messages, and notifying individuals about significant events. However, it is important to note the following:
 
-* No SMTP or login needed, it uses PHP `mail()`
-* Send bulk emails
-* Send multiple attachments
-* Free and open source
+* The tool should not be used for illegal activities. Any misuse of the application is strictly prohibited.
+* The developer holds no responsibility for any damage caused to individuals or entities resulting from the use of DinoMailer.
+* It is essential to recognize that recipients have the ability to trace your web server's IP address.
 
+## Video
 
+To get a visual overview of DinoMailer's functionalities, please refer to the following video:
 
-
-
-
-
-
-
-# Disclaimer
-
-DinoMailer is a great way to stay in touch with your customers, send out marketing messages, or notify people about important events. It is a powerful tool that can be used for a variety of purposes.
-
-
-Don't use it for illegal activities, I will not be responsible to any damage on any person or entities. The receiver could trace your web server's IP.
-
-
-
-
-
-
-
-
-
-# Video
-
-
-
-https://github.com/daniisaahir/DinoMailer/assets/131199603/ee3f52e8-d8e0-40a3-9794-af053e6ff3e2
-
-
-
-
-
-
+[Watch here](https://github.com/daniisaahir/DinoMailer/assets/131199603/ee3f52e8-d8e0-40a3-9794-af053e6ff3e2)
